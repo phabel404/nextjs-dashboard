@@ -256,9 +256,10 @@ className={clsx(
 )}
 ```
 
-`Quiz`
-Search for "clsx" in your code editor, what components use it to conditionally apply class names?
-`status.tsx` and `pagination.tsx`
+> ### It’s time to take a quiz!
+>
+> Search for "clsx" in your code editor, what components use it to conditionally apply class names?
+> `status.tsx` and `pagination.tsx`
 
 ## Other styling solutions
 
@@ -268,4 +269,11 @@ In addition to the approaches we've discussed, you can also style your Next.js a
 - `CSS-in-JS` libraries such as [styled-jsx](https://github.com/vercel/styled-jsx), [styled-components](https://github.com/vercel/next.js/tree/canary/examples/with-styled-components), and [emotion](https://github.com/vercel/next.js/tree/canary/examples/with-emotion).
   Take a look at the [CSS documentation](https://nextjs.org/docs/app/building-your-application/styling) for more information.
 
-##
+# 3.Optimizing Fonts and Images
+
+## Why optimize fonts?
+
+Fonts play a significant role in the design of a website, but using custom fonts in your project can affect performance if the font files need to be fetched and loaded.
+
+[Cumulative Layout Shift](https://web.dev/cls/) is a metric used by Google to evaluate the performance and user experience of a website. With fonts, layout shift happens when the browser initially renders text in a fallback or system font and then swaps it out for a custom font once it has loaded. This swap can cause the text size, spacing, or layout to change, shifting elements around it.
+![Mock UI showing initial load of a page, followed by a layout shift as the custom font loads.](https://nextjs.org/_next/image?url=%2Flearn%2Flight%2Ffont-layout-shift.png&w=1920&q=75&dpl=dpl_AGVpExNSxGb3dC5jrZYnL2rzPEsj 'Mock UI showing initial load of a page, followed by a layout shift as the custom font loads.')
