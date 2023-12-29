@@ -97,7 +97,9 @@ npm run dev
 ```
 
 Let's check to see if it's working. Open http://localhost:3000 on your browser.
-![Unstyled page with the title 'Acme', a description, and login link.](https://nextjs.org/_next/image?url=%2Flearn%2Flight%2Facme-unstyled.png&w=1920&q=75&dpl=dpl_AGVpExNSxGb3dC5jrZYnL2rzPEsj 'Unstyled page with the title 'Acme', a description, and login link.')
+![Unstyled page with the title 'Acme', a description, and login link.](https://nextjs.org/_next/image?url=%2Flearn%2Flight%2Facme-unstyled.png&w=1920&q=75&dpl=dpl_AGVpExNSxGb3dC5jrZYnL2rzPEsj "Unstyled page with the title 'Acme', a description, and login link.")
+
+# 2. CSS Styling
 
 ## Global styles
 
@@ -109,8 +111,22 @@ Add global styles to your application by navigating to `/app/layout.tsx` and imp
 
 ```TypeScript
 import '@/app/ui/global.css';
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="en">
+      <body>{children}</body>
+    </html>
+  );
+}
 ```
 
+With the development server still running, save your changes and preview them in the browser. Your home page should now look like this:
+![Styled page with the logo 'Acme', a description, and login link.](https://nextjs.org/_next/image?url=%2Flearn%2Flight%2Fhome-page-with-tailwind.png&w=1080&q=75&dpl=dpl_AGVpExNSxGb3dC5jrZYnL2rzPEsj "Styled page with the logo 'Acme', a description, and login link.")
 But wait a second, you didn't add any CSS rules, where did the styles come from?
 
 If you take a look inside `global.css`, you'll notice some @tailwind directives:
@@ -163,9 +179,10 @@ Let's play with Tailwind! Copy the code below and paste it above the `<p>` eleme
 />
 ```
 
-`Quiz`
-What shape do you see when using the code snippet above?
-`A black triangle`
+> ### It’s time to take a quiz!
+>
+> What shape do you see when using the code snippet above?
+> `A black triangle`
 
 ## CSS Modules
 
@@ -205,9 +222,10 @@ Save your changes and preview them in the browser. You should see the same shape
 
 Tailwind and CSS modules are the two most common ways of styling Next.js applications. Whether you use one or the other is a matter of preference - you can even use both in the same application!
 
-`Quiz`
-What is one benefit of using CSS modules?
-`Provide a way to make CSS classes locally scoped to components by default, reducing the risk of styling conflicts.`
+> ### It’s time to take a quiz!
+>
+> What is one benefit of using CSS modules?
+> `Provide a way to make CSS classes locally scoped to components by default, reducing the risk of styling conflicts.`
 
 ## Using the clsx library to toggle class names
 
