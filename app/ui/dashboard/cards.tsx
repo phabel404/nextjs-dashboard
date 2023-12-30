@@ -33,7 +33,6 @@ export default async function CardWrapper() {
           type="customers"
         />
       </>
-      );
     </>
   );
 }

@@ -792,31 +792,3 @@ Hooray! 🎉 Your project is now deployed.
 ![Project overview screen showing the project name, domain, and deployment status](https://nextjs.org/_next/image?url=%2Flearn%2Flight%2Fdeployed-project.png&w=1080&q=75&dpl=dpl_AGVpExNSxGb3dC5jrZYnL2rzPEsj 'Project overview screen showing the project name, domain, and deployment status')
 
 By connecting your GitHub repository, whenever you push changes to your **main** branch, Vercel will automatically redeploy your application with no configuration needed. When opening pull requests, you'll also have [instant previews](https://vercel.com/docs/deployments/preview-deployments#preview-urls) which allow you to catch deployment errors early and share a preview of your project with team members for feedback.
-
-##
-
-###
-
-# 7.
-
-##
-
-##
-
-##
-
-##
-
-###
-
-# 8.
-
-##
-
-##
-
-##
-
-##
-
-###
