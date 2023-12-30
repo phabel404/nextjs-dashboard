@@ -767,11 +767,31 @@ Save and check your localhost. You should now see the active link highlighted in
 
 # 6. Setting Up Your Database
 
-##
+## Create a GitHub repository
 
-##
+To start, let's push your repository to Github if you haven't done so already. This will make it easier to set up your database and deploy.
 
-##
+If you need help setting up your repository, take a look at this [guide on GitHub](https://help.github.com/en/github/getting-started-with-github/create-a-repo).
+
+> ### **Good to know:**
+>
+> - You can also use other Git provider like GitLab or Bitbucket.
+> - If you're new to GitHub, we recommend the [GitHub Desktop](https://desktop.github.com/) App for a simplified development workflow.
+
+## Create a Vercel account
+
+Visit [vercel.com/signup](vercel.com/signup) to create an account. Choose the free "hobby" plan. Select **Continue with GitHub** to connect your GitHub and Vercel accounts.
+
+## Connect and deploy your project
+
+Next, you'll be taken to this screen where you can select and **import** the GitHub repository you've just created:
+![Screenshot of Vercel Dashboard, showing the import project screen with a list of the user's GitHub Repositories](https://nextjs.org/_next/image?url=%2Flearn%2Flight%2Fimport-git-repo.png&w=1080&q=75&dpl=dpl_AGVpExNSxGb3dC5jrZYnL2rzPEsj "Screenshot of Vercel Dashboard, showing the import project screen with a list of the user's GitHub Repositories")
+Name your project and click **Deploy**.
+![Deployment screen showing the project name field and a deploy button](https://nextjs.org/_next/image?url=%2Flearn%2Flight%2Fconfigure-project.png&w=1080&q=75&dpl=dpl_AGVpExNSxGb3dC5jrZYnL2rzPEsj 'Deployment screen showing the project name field and a deploy button')
+Hooray! 🎉 Your project is now deployed.
+![Project overview screen showing the project name, domain, and deployment status](https://nextjs.org/_next/image?url=%2Flearn%2Flight%2Fdeployed-project.png&w=1080&q=75&dpl=dpl_AGVpExNSxGb3dC5jrZYnL2rzPEsj 'Project overview screen showing the project name, domain, and deployment status')
+
+By connecting your GitHub repository, whenever you push changes to your **main** branch, Vercel will automatically redeploy your application with no configuration needed. When opening pull requests, you'll also have [instant previews](https://vercel.com/docs/deployments/preview-deployments#preview-urls) which allow you to catch deployment errors early and share a preview of your project with team members for feedback.
 
 ##
 
