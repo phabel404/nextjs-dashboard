@@ -269,7 +269,7 @@ In addition to the approaches we've discussed, you can also style your Next.js a
 - `CSS-in-JS` libraries such as [styled-jsx](https://github.com/vercel/styled-jsx), [styled-components](https://github.com/vercel/next.js/tree/canary/examples/with-styled-components), and [emotion](https://github.com/vercel/next.js/tree/canary/examples/with-emotion).
   Take a look at the [CSS documentation](https://nextjs.org/docs/app/building-your-application/styling) for more information.
 
-# 3.Optimizing Fonts and Images
+# 3. Optimizing Fonts and Images
 
 ## Why optimize fonts?
 
@@ -277,3 +277,526 @@ Fonts play a significant role in the design of a website, but using custom fonts
 
 [Cumulative Layout Shift](https://web.dev/cls/) is a metric used by Google to evaluate the performance and user experience of a website. With fonts, layout shift happens when the browser initially renders text in a fallback or system font and then swaps it out for a custom font once it has loaded. This swap can cause the text size, spacing, or layout to change, shifting elements around it.
 ![Mock UI showing initial load of a page, followed by a layout shift as the custom font loads.](https://nextjs.org/_next/image?url=%2Flearn%2Flight%2Ffont-layout-shift.png&w=1920&q=75&dpl=dpl_AGVpExNSxGb3dC5jrZYnL2rzPEsj 'Mock UI showing initial load of a page, followed by a layout shift as the custom font loads.')
+
+> ### It’s time to take a quiz!
+>
+> How does Next.js optimize fonts?
+> `It hosts font files with other static assets so that there are no additional network requests.`
+
+## Adding a primary font
+
+Let's add a custom Google font to your application to see how this works!
+
+In your `/app/ui` folder, create a new file called `fonts.ts`. You'll use this file to keep the fonts that will be used throughout your application.
+
+Import the `Inter` font from the `next/font/google` module - this will be your primary font. Then, specify what [subset](https://fonts.google.com/knowledge/glossary/subsetting) you'd like to load. In this case, `'latin'`:
+
+`/app/ui/fonts.ts`
+
+```Typescript
+import { Inter } from 'next/font/google';
+
+export const inter = Inter({ subsets: ['latin'] });
+```
+
+Finally, add the font to the `<body>` element in `/app/layout.tsx`:
+
+`/app/layout.tsx`
+
+```Typescript
+import '@/app/ui/global.css';
+import { inter } from '@/app/ui/fonts';
+
+export default function RootLayout({
+children,
+}: {
+    children: React.ReactNode;
+}) {
+return (
+
+<html lang="en">
+    <body className={`${inter.className} antialiased`}>{children}</body>
+</html>
+);
+}
+```
+
+By adding `Inter` to the `<body>` element, the font will be applied throughout your application. Here, you're also adding the Tailwind [antialiased](https://tailwindcss.com/docs/font-smoothing) class which smooths out the font. It's not necessary to use this class, but it adds a nice touch.
+
+Navigate to your browser, open dev tools and select the body element. You should see `Inter` and `Inter_Fallback` are now applied under styles.
+
+## Practice: Adding a secondary font
+
+You can also add fonts to specific elements of your application.
+
+Now it's your turn! In your `fonts.ts` file, import a secondary font called `Lusitana` and pass it to the `<p>` element in your `/app/page.tsx` file. In addition to specifying a subset like you did before, you'll also need to specify the font **weight**.
+
+Once you're ready, expand the code snippet below to see the solution.
+
+> ### Hints:
+>
+> If you're unsure what weight options to pass to a font, check the TypeScript errors in your code editor.
+> Visit the [Google Fonts](https://fonts.google.com/) website and search for `Lusitana` to see what options are available.
+> See the documentation for [adding multiple fonts](https://nextjs.org/docs/app/building-your-application/optimizing/fonts#using-multiple-fonts) and the [full list of options](https://nextjs.org/docs/app/api-reference/components/font#font-function-arguments).
+
+Finally, the `<AcmeLogo />` component also uses `Lusitana`. It was commented out to prevent errors, you can now uncomment it:
+
+`/app/page.tsx`
+
+```Typescript
+// ...
+
+export default function Page() {
+    return (
+        <main className="flex min-h-screen flex-col p-6">
+            <div className="flex h-20 shrink-0 items-end rounded-lg bg-blue-500 p-4 md:h-52">
+                <AcmeLogo />
+                {/* ... */}
+            </div>
+        </main>
+    );
+}
+```
+
+Great, you've added two custom fonts to your application! Next, let's add a hero image to the home page.
+
+## Why optimize images?
+
+Next.js can serve **static assets**, like images, under the top-level [/public](https://nextjs.org/docs/app/building-your-application/optimizing/static-assets) folder. Files inside `/public` can be referenced in your application.
+
+With regular HTML, you would add an image as follows:
+
+```HTML
+<img
+  src="/hero.png"
+  alt="Screenshots of the dashboard project showing desktop version"
+/>
+```
+
+However, this means you have to manually:
+
+- Ensure your image is responsive on different screen sizes.
+- Specify image sizes for different devices.
+- Prevent layout shift as the images load.
+- Lazy load images that are outside the user's viewport.
+- Image Optimization is a large topic in web development that could be considered a specialization in itself. Instead of manually implementing these optimizations, you can use the `next/image` component to automatically optimize your images.
+
+## The <Image> component
+
+The `<Image>` Component is an extension of the HTML `<img>` tag, and comes with automatic image optimization, such as:
+
+Preventing layout shift automatically when images are loading.
+Resizing images to avoid shipping large images to devices with a smaller viewport.
+Lazy loading images by default (images load as they enter the viewport).
+Serving images in modern formats, like [WebP](https://developer.mozilla.org/en-US/docs/Web/Media/Formats/Image_types#webp) and [AVIF](https://developer.mozilla.org/en-US/docs/Web/Media/Formats/Image_types#avif_image), when the browser supports it.
+
+## Adding the desktop hero image
+
+Let's use the `<Image>` component. If you look inside the `/public` folder, you'll see there are two images: `hero-desktop.png` and `hero-mobile.png`. These two images are completely different, and they'll be shown depending if the user's `device` is a `desktop` or `mobile`.
+
+In your `/app/page.tsx` file, import the component from `next/image`. Then, add the image under the comment:
+
+`/app/page.tsx`
+
+```TS
+import AcmeLogo from '@/app/ui/acme-logo';
+import { ArrowRightIcon } from '@heroicons/react/24/outline';
+import Link from 'next/link';
+import { lusitana } from '@/app/ui/fonts';
+import Image from 'next/image';
+
+export default function Page() {
+return (
+// ...
+
+<div className="flex items-center justify-center p-6 md:w-3/5 md:px-28 md:py-12">
+{/* Add Hero Images Here */}
+<Image
+        src="/hero-desktop.png"
+        width={1000}
+        height={760}
+        className="hidden md:block"
+        alt="Screenshots of the dashboard project showing desktop version"
+      />
+</div>
+//...
+);
+}
+```
+
+Here, you're setting the width to 1000 and height to 760 pixels. It's good practice to set the width and height of your images to avoid layout shift, these should be an aspect ratio identical to the source image.
+
+You'll also notice the class hidden to remove the image from the DOM on mobile screens, and md:block to show the image on desktop screens.
+
+This is what your home page should look like now:
+![Styled home page with a custom font and hero image](https://nextjs.org/_next/image?url=%2Flearn%2Flight%2Fhome-page-with-hero.png&w=1080&q=75&dpl=dpl_AGVpExNSxGb3dC5jrZYnL2rzPEsj 'Styled home page with a custom font and hero image')
+
+## Practice: Adding the mobile hero image
+
+Now it's your turn! Under the image you've just added, add another `<Image>` component for `hero-mobile.png`.
+
+- The image should have a `width` of `560` and `height` of `620` pixels.
+- It should be shown on `mobile screens`, and `hidden on desktop` - you can use dev tools to check if the desktop and mobile images are swapped correctly.
+  Once you're ready, expand the code snippet below to see the solution.
+
+`/app/page.tsx`
+
+```TS
+import AcmeLogo from '@/app/ui/acme-logo';
+import { ArrowRightIcon } from '@heroicons/react/24/outline';
+import Link from 'next/link';
+import { lusitana } from '@/app/ui/fonts';
+import Image from 'next/image';
+
+export default function Page() {
+  return (
+    // ...
+    <div className="flex items-center justify-center p-6 md:w-3/5 md:px-28 md:py-12">
+      {/* Add Hero Images Here */}
+      <Image
+        src="/hero-desktop.png"
+        width={1000}
+        height={760}
+        className="hidden md:block"
+        alt="Screenshots of the dashboard project showing desktop version"
+      />
+      <Image
+        src="/hero-mobile.png"
+        width={560}
+        height={620}
+        className="block md:hidden"
+        alt="Screenshot of the dashboard project showing mobile version"
+      />
+    </div>
+    //...
+  );
+}
+```
+
+Great! Your home page now has a custom font and hero images.
+
+> ### It’s time to take a quiz!
+>
+> True or False: Images without dimensions and web fonts are common causes of layout shift.
+> `True`
+
+## Recommended reading
+
+There's a lot more to learn about these topics, including optimizing remote images and using local font files. If you'd like to dive deeper into fonts and images, see:
+
+- [Image Optimization Docs](https://nextjs.org/docs/app/building-your-application/optimizing/images)
+- [Font Optimization Docs](https://nextjs.org/docs/app/building-your-application/optimizing/fonts)
+- [Improving Web Performance with Images (MDN)](https://developer.mozilla.org/en-US/docs/Learn/Performance/Multimedia)
+- [Web Fonts (MDN)](https://developer.mozilla.org/en-US/docs/Learn/CSS/Styling_text/Web_fonts)
+
+# 4. Creating Layouts and Pages
+
+## Nested routing
+
+Next.js uses file-system routing where **folders** are used to create nested routes. Each folder represents a **route segment** that maps to a **URL segment**.
+![Diagram showing how folders map to URL segments](https://nextjs.org/_next/image?url=%2Flearn%2Flight%2Ffolders-to-url-segments.png&w=1920&q=75&dpl=dpl_AGVpExNSxGb3dC5jrZYnL2rzPEsj 'Diagram showing how folders map to URL segments')
+
+Diagram showing how folders map to URL segments
+You can `create` separate UIs for each route using `layout.tsx` and `page.tsx` files.
+
+`page.tsx` is a special Next.js file that exports a React component, and it's required for the route to be accessible. In your application, you already have a page file: `/app/page.tsx` - this is the home page associated with the route `/`.
+
+To create a nested route, you can nest folders inside each other and add `page.tsx` files inside them. For example:
+![Diagram showing how adding a folder called dashboard creates a new route '/dashboard'](https://nextjs.org/_next/image?url=%2Flearn%2Flight%2Fdashboard-route.png&w=1920&q=75&dpl=dpl_AGVpExNSxGb3dC5jrZYnL2rzPEsj "Diagram showing how adding a folder called dashboard creates a new route '/dashboard'")
+
+`/app/dashboard/page.tsx` is associated with the `/dashboard` path. Let's create the page to see how it works!
+
+## Creating the dashboard page
+
+Create a new folder called dashboard inside `/app`. Then, create a new `page.tsx` file inside the dashboard folder with the following content:
+
+`/app/dashboard/page.tsx`
+
+```TS
+export default function Page() {
+  return <p>Dashboard Page</p>;
+}
+```
+
+Now, make sure that the development server is running and visit http://localhost:3000/dashboard. You should see the "Dashboard Page" text.
+
+This is how you can create different `pages` in Next.js: create a new route segment using a folder, and add a `page` file inside it.
+
+By having a special name for page files, Next.js allows you to [colocate](https://nextjs.org/docs/app/building-your-application/routing#colocation) UI components, test files, and other related code with your routes. Only the content inside the page file will be publicly accessible. For example, the `/ui` and `/lib` folders are colocated inside the `/app` folder along with your routes.
+
+## Practice: Creating the dashboard pages
+
+Let's practice creating more routes. In your dashboard, create two more pages:
+
+1. **Customers Page:** The page should be accessible on http://localhost:3000/dashboard/customers. For now, it should return a `<p>Customers Page</p>` element.
+2. **Invoices Page:** The invoices page should be accessible on http://localhost:3000/dashboard/invoices. For now, also return a `<p>Invoices Page</p>` element.
+
+Spend some time tackling this exercise, and when you're ready, expand the toggle below for the solution:
+
+You should have the following folder structure:
+![Diagram showing how adding a folder called login creates a new route '/login'](https://nextjs.org/_next/image?url=%2Flearn%2Flight%2Frouting-solution.png&w=1920&q=75&dpl=dpl_AGVpExNSxGb3dC5jrZYnL2rzPEsj "Diagram showing how adding a folder called login creates a new route '/login'")
+
+Diagram showing how adding a folder called login creates a new route `'/login'`
+**Customers Page:**
+`/app/dashboard/customers/page.tsx`
+
+```TS
+export default function Page() {
+return <p>Customers Page</p>;
+}
+```
+
+**Invoices Page:**
+`/app/dashboard/invoices/page.tsx`
+
+```TS
+export default function Page() {
+return <p>Invoices Page</p>;
+}
+```
+
+## Creating the dashboard layout
+
+Dashboards have some sort of navigation that is shared across multiple pages. In Next.js, you can use a special layout.tsx file to create UI that is shared between multiple pages. Let's create a layout for the dashboard pages!
+
+Inside the `/dashboard` folder, add a new file called `layout.tsx` and paste the following code:
+
+`/app/dashboard/layout.tsx`
+
+```TS
+import SideNav from '@/app/ui/dashboard/sidenav';
+
+export default function Layout({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="flex h-screen flex-col md:flex-row md:overflow-hidden">
+      <div className="w-full flex-none md:w-64">
+        <SideNav />
+      </div>
+      <div className="flex-grow p-6 md:overflow-y-auto md:p-12">{children}</div>
+    </div>
+  );
+}
+```
+
+A few things are going on in this code, so let's break it down:
+
+First, you're importing the `<SideNav />` component into your layout. Any components you import into this file will be part of the layout.
+
+The `<Layout />` component receives a `children` prop. This child can either be a page or another layout. In your case, the pages inside `/dashboard` will automatically be nested inside a `<Layout />` like so:
+![Folder structure with dashboard layout nesting the dashboard pages as children](https://nextjs.org/_next/image?url=%2Flearn%2Flight%2Fshared-layout.png&w=1920&q=75&dpl=dpl_AGVpExNSxGb3dC5jrZYnL2rzPEsj 'Folder structure with dashboard layout nesting the dashboard pages as children')
+
+Folder structure with dashboard layout nesting the dashboard pages as children
+Check that everything is working correctly by saving your changes and checking your localhost. You should see the following:
+![Dashboard page with a sidenav and a main content area](https://nextjs.org/_next/image?url=%2Flearn%2Flight%2Fshared-layout-page.png&w=1080&q=75&dpl=dpl_AGVpExNSxGb3dC5jrZYnL2rzPEsj 'Dashboard page with a sidenav and a main content area')
+
+Dashboard page with a sidenav and a main content area
+One benefit of using layouts in Next.js is that on navigation, only the page components update while the layout won't re-render. This is called [partial rendering](https://nextjs.org/docs/app/building-your-application/routing/linking-and-navigating#3-partial-rendering):
+![Folder structure showing the dashboard layout nesting the dashboard pages, but only the pages UI swap on navigation](https://nextjs.org/_next/image?url=%2Flearn%2Flight%2Fpartial-rendering-dashboard.png&w=1920&q=75&dpl=dpl_AGVpExNSxGb3dC5jrZYnL2rzPEsj 'Folder structure showing the dashboard layout nesting the dashboard pages, but only the pages UI swap on navigation')
+
+## Root layout
+
+In Chapter 3, you imported the Inter font into another layout: `/app/layout.tsx`. As a reminder:
+
+`/app/layout.tsx`
+
+```TS
+import '@/app/ui/global.css';
+import { inter } from '@/app/ui/fonts';
+
+export default function RootLayout({
+children,
+}: {
+children: React.ReactNode;
+}) {
+return (
+<html lang="en">
+<body className={`${inter.className} antialiased`}>{children}</body>
+</html>
+);
+}
+```
+
+This is called a [root layout](https://nextjs.org/docs/app/building-your-application/routing/pages-and-layouts#root-layout-required) and is required. Any UI you add to the root layout will be shared across **all** pages in your application. You can use the root layout to modify your `<html>` and `<body>` tags, and add metadata (you'll learn more about metadata in [a later chapter](https://nextjs.org/learn/dashboard-app/adding-metadata)).
+
+Since the new layout you've just created (`/app/dashboard/layout.tsx`) is unique to the dashboard pages, you don't need to add any UI to the root layout above.
+
+> ### It’s time to take a quiz!
+>
+> What is the purpose of the layout file in Next.js?
+> `To share UI across multiple pages`
+
+# 5. Navigating Between Pages
+
+## Why optimize navigation?
+
+To link between pages, you'd traditionally use the `<a>` HTML element. At the moment, the sidebar links use `<a>` elements, but notice what happens when you navigate between the home, invoices, and customers pages on your browser.
+
+Did you see it?
+
+There's a full page refresh on each page navigation!
+
+## The <Link> component
+
+In Next.js, you can use the `<Link />` Component to link between pages in your application. `<Link>` allows you to do [client-side navigation](https://nextjs.org/docs/app/building-your-application/routing/linking-and-navigating#how-routing-and-navigation-works) with JavaScript.
+
+To use the `<Link />` component, open `/app/ui/dashboard/nav-links.tsx`, and import the Link component from [next/link](https://nextjs.org/docs/app/api-reference/components/link). Then, replace the `<a>` tag with `<Link>`:
+
+`/app/ui/dashboard/nav-links.tsx`
+
+```TS
+import {
+ UserGroupIcon,
+ HomeIcon,
+ DocumentDuplicateIcon,
+} from '@heroicons/react/24/outline';
+import Link from 'next/link';
+
+// ...
+export default function NavLinks() {
+ return (
+   <>
+     {links.map((link) => {
+       const LinkIcon = link.icon;
+       return (
+         <Link
+           key={link.name}
+           href={link.href}
+           className="flex h-[48px] grow items-center justify-center gap-2 rounded-md bg-gray-50 p-3 text-sm font-medium hover:bg-sky-100 hover:text-blue-600 md:flex-none md:justify-start md:p-2 md:px-3"
+         >
+           <LinkIcon className="w-6" />
+           <p className="hidden md:block">{link.name}</p>
+         </Link>
+       );
+     })}
+   </>
+ );
+}
+```
+
+As you can see, the `Link` component is similar to using `<a>` tags, but instead of `<a href="…">`, you use `<Link href="…">`.
+
+Save your changes and check to see if it works in your localhost. You should now be able to navigate between the pages without seeing a full refresh. Although parts of your application are rendered on the server, there's no full page refresh, making it feel like a web app. Why is that?
+
+> ### It’s time to take a quiz!
+>
+> What does Next.js do when a <Link> component appears in the browser’s viewport in a production environment?
+> `Prefetches the code for the linked route`
+
+## Pattern: Showing active links
+
+A common UI pattern is to show an active link to indicate to the user what page they are currently on. To do this, you need to get the user's current path from the URL. Next.js provides a hook called [usePathname()](https://nextjs.org/docs/app/api-reference/functions/use-pathname) that you can use to check the path and implement this pattern.
+
+Since [usePathname()](https://nextjs.org/docs/app/api-reference/functions/use-pathname) is a hook, you'll need to turn `nav-links.tsx` into a Client Component. Add React's `"use client"` directive to the top of the file, then import `usePathname()` from `next/navigation`:
+
+`/app/ui/dashboard/nav-links.tsx`
+
+```TS
+'use client';
+
+import {
+  UserGroupIcon,
+  HomeIcon,
+  InboxIcon,
+} from '@heroicons/react/24/outline';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+
+// ...
+```
+
+Next, assign the path to a variable called pathname inside your `<NavLinks />` component:
+
+`/app/ui/dashboard/nav-links.tsx`
+
+```TS
+export default function NavLinks() {
+  const pathname = usePathname();
+  // ...
+}
+```
+
+You can use the `clsx` library introduced in the chapter on [CSS styling](https://nextjs.org/learn/dashboard-app/css-styling) to conditionally apply class names when the link is active. When `link.href` matches the `pathname`, the link should displayed with blue text and a light blue background.
+
+Here's the final code for `nav-links.tsx`:
+
+`/app/ui/dashboard/nav-links.tsx`
+
+```TS
+'use client';
+
+import {
+  UserGroupIcon,
+  HomeIcon,
+  DocumentDuplicateIcon,
+} from '@heroicons/react/24/outline';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import clsx from 'clsx';
+
+// ...
+
+export default function NavLinks() {
+  const pathname = usePathname();
+
+  return (
+    <>
+      {links.map((link) => {
+        const LinkIcon = link.icon;
+        return (
+          <Link
+            key={link.name}
+            href={link.href}
+            className={clsx(
+              'flex h-[48px] grow items-center justify-center gap-2 rounded-md bg-gray-50 p-3 text-sm font-medium hover:bg-sky-100 hover:text-blue-600 md:flex-none md:justify-start md:p-2 md:px-3',
+              {
+                'bg-sky-100 text-blue-600': pathname === link.href,
+              },
+            )}
+          >
+            <LinkIcon className="w-6" />
+            <p className="hidden md:block">{link.name}</p>
+          </Link>
+        );
+      })}
+    </>
+  );
+}
+```
+
+Save and check your localhost. You should now see the active link highlighted in blue.
+
+# 6. Setting Up Your Database
+
+##
+
+##
+
+##
+
+##
+
+###
+
+# 7.
+
+##
+
+##
+
+##
+
+##
+
+###
+
+# 8.
+
+##
+
+##
+
+##
+
+##
+
+###
