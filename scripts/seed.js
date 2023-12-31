@@ -4,6 +4,7 @@ const {
   customers,
   revenue,
   users,
+  products,
 } = require('../app/lib/placeholder-data.js');
 const bcrypt = require('bcrypt');
 
@@ -160,13 +161,71 @@ async function seedRevenue(client) {
   }
 }
 
+async function seedProducts(client) {
+  try {
+    await client.sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
+    // Create the "products" table if it doesn't exist
+    const createTable = await client.sql`
+      CREATE TABLE products (
+      id SERIAL PRIMARY KEY,
+      title VARCHAR(255),
+      price NUMERIC,
+      description TEXT,
+      category VARCHAR(255),
+      image_url VARCHAR(255),
+      count INT,
+      rate INT,
+      rating NUMERIC
+      );
+    `;
+
+    console.log(`Created "products" table`);
+
+    // Insert data into the "products" table
+    const insertedProducts = await Promise.all(
+      products.map(async (product) => {
+        // Clone the product object to avoid modifying the original object
+        const clonedProduct = { ...product };
+
+        // Extract the rating object from the clonedProduct
+        const { rating, ...productWithoutRating } = clonedProduct;
+
+        // Build the SQL query string
+        const queryString = `
+        INSERT INTO products (id, title, price, description, category, image_url, rating, rate, count)
+        VALUES ('${productWithoutRating.id}', '${productWithoutRating.title}', ${productWithoutRating.price}, '${productWithoutRating.description}', '${productWithoutRating.category}', '${productWithoutRating.image}', ${rating.rate},${rating.rate}, ${rating.count})
+        ON CONFLICT (id) DO NOTHING;
+        `;
+
+        console.log('Query String:', queryString);
+
+        // Now execute the query using client.query
+        const result = await client.query(queryString);
+
+        return result;
+      }),
+    );
+
+    console.log(`Seeded ${insertedProducts.length} products`);
+
+    return {
+      createTable,
+      products: insertedProducts,
+    };
+  } catch (error) {
+    console.error('Error seeding products:', error);
+    throw error;
+  }
+}
+
 async function main() {
   const client = await db.connect();
 
-  await seedUsers(client);
+  /* await seedUsers(client);
   await seedCustomers(client);
   await seedInvoices(client);
-  await seedRevenue(client);
+  await seedRevenue(client); */
+  await seedProducts(client);
 
   await client.end();
 }

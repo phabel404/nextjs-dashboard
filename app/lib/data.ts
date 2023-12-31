@@ -7,9 +7,12 @@ import {
   LatestInvoiceRaw,
   User,
   Revenue,
+  Product,
+  ProductTable,
 } from './definitions';
 import { formatCurrency } from './utils';
 import { unstable_noStore as noStore } from 'next/cache';
+import { products } from './placeholder-data';
 
 export async function fetchRevenue() {
   // Add noStore() here prevent the response from being cached.
@@ -236,5 +239,83 @@ export async function getUser(email: string) {
   } catch (error) {
     console.error('Failed to fetch user:', error);
     throw new Error('Failed to fetch user.');
+  }
+}
+
+export async function fetchFilteredProducts(
+  query: string,
+  currentPage: number,
+) {
+  noStore();
+  const offset = (currentPage - 1) * ITEMS_PER_PAGE;
+
+  try {
+    const products = await sql<ProductTable>`
+      SELECT
+        products.id,
+        products.title,  -- Ganti "tittle" menjadi "title"
+        products.description,
+        products.price,
+        products.rating,
+        products.image_url
+      FROM products
+      WHERE
+        products.title ILIKE ${`%${query}%`}
+        OR products.description ILIKE ${`%${query}%`}
+        OR products.category ILIKE ${`%${query}%`}
+      ORDER BY products.title DESC
+      LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
+    `;
+
+    return products.rows;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch products.');
+  }
+}
+
+export async function fetchProductsPages(query: string) {
+  noStore();
+  try {
+    const count = await sql`SELECT COUNT(*)
+    FROM products
+    WHERE
+      products.title ILIKE ${`%${query}%`}
+      OR products.description ILIKE ${`%${query}%`}
+      OR products.category ILIKE ${`%${query}%`}`;
+
+    const totalPages = Math.ceil(Number(count.rows[0].count) / ITEMS_PER_PAGE);
+    return totalPages;
+  } catch (error) {
+    console.error('Error fetching total number of products:', error);
+    throw new Error('Failed to fetch total number of products.');
+  }
+}
+
+export async function fetchProductsById(id: string) {
+  noStore();
+  try {
+    const data = await sql<ProductForm>`
+      SELECT
+        products.id,
+        products.title,
+        products.description,
+        products.price
+        products.rating
+        products.image_url
+      FROM products
+      WHERE products.id = ${id};
+    `;
+
+    const product = data.rows.map((product) => ({
+      ...product,
+      // Convert price from cents to dollars
+      price: product.price / 100,
+    }));
+
+    return product[0];
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch product.');
   }
 }
