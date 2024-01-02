@@ -19,7 +19,7 @@ const links = [
     href: '/dashboard/invoices',
     icon: DocumentDuplicateIcon,
   },
-  { name: 'Product', href: '/dashboard/product', icon: ArchiveBoxIcon },
+  { name: 'Products', href: '/dashboard/products', icon: ArchiveBoxIcon },
   { name: 'Customers', href: '/dashboard/customers', icon: UserGroupIcon },
 ];
 

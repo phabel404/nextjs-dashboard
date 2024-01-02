@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { UpdateInvoice, DeleteInvoice } from '@/app/ui/invoices/buttons';
+import { UpdateProduct, DeleteProduct } from '@/app/ui/products/buttons';
 import { formatCurrency } from '@/app/lib/utils';
 import { fetchFilteredProducts } from '@/app/lib/data';
 
@@ -46,8 +46,8 @@ export default async function ProductsTable({
                     </p>
                   </div>
                   <div className="flex justify-end gap-2">
-                    <UpdateInvoice id={product.id} />
-                    <DeleteInvoice id={product.id} />
+                    <UpdateProduct id={product.id} />
+                    <DeleteProduct id={product.id} />
                   </div>
                 </div>
               </div>
@@ -57,13 +57,7 @@ export default async function ProductsTable({
             <thead className="rounded-lg text-left text-sm font-normal">
               <tr>
                 <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
-                  Product
-                </th>
-                <th scope="col" className="px-3 py-5 font-medium">
-                  Title
-                </th>
-                <th scope="col" className="px-3 py-5 font-medium">
-                  Description
+                  Prouct
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
                   Price
@@ -85,7 +79,7 @@ export default async function ProductsTable({
                   <td className="whitespace-nowrap py-3 pl-6 pr-3">
                     <div className="flex items-center gap-3">
                       <Image
-                        src={product.image}
+                        src={product.image_url}
                         className="rounded-full"
                         width={28}
                         height={28}
@@ -95,17 +89,14 @@ export default async function ProductsTable({
                     </div>
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
-                    {/* {product.description} */}
-                  </td>
-                  <td className="whitespace-nowrap px-3 py-3">
                     {formatCurrency(product.price)}
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
                     {product.rating}
                   </td>
                   <td className="flex justify-end gap-2 whitespace-nowrap px-6 py-4 text-sm">
-                    <UpdateInvoice id={product.id} />
-                    <DeleteInvoice id={product.id} />
+                    <UpdateProduct id={product.id} />
+                    <DeleteProduct id={product.id} />
                   </td>
                 </tr>
               ))}

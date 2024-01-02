@@ -98,3 +98,15 @@ export type Product = {
   rate: number;
   count: number;
 };
+
+export type ProductForm = {
+  id: string;
+  title: string;
+  price: number;
+  category: string;
+  description: string;
+  image_url: string;
+  rating: string;
+  rate: number;
+  count: number;
+};

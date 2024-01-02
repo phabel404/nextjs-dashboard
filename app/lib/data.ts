@@ -8,11 +8,10 @@ import {
   User,
   Revenue,
   Product,
-  ProductTable,
+  ProductForm,
 } from './definitions';
 import { formatCurrency } from './utils';
 import { unstable_noStore as noStore } from 'next/cache';
-import { products } from './placeholder-data';
 
 export async function fetchRevenue() {
   // Add noStore() here prevent the response from being cached.
@@ -250,10 +249,10 @@ export async function fetchFilteredProducts(
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
 
   try {
-    const products = await sql<ProductTable>`
+    const products = await sql<Product>`
       SELECT
         products.id,
-        products.title,  -- Ganti "tittle" menjadi "title"
+        products.title,
         products.description,
         products.price,
         products.rating,
