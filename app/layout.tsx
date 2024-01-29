@@ -17,6 +17,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <meta name="google-site-verification" content="t6mq3B2VxIaibXcoWanek4vat8viM4SnHYJAp8_KySs" />
       <body className={`${inter.className} antialiased`}>
         <SpeedInsights />
         <Analytics />
